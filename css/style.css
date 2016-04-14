@@ -1,0 +1,57 @@
+body {
+	font-family: 'Anonymous Pro';
+	font-size: 3em;
+}
+
+.interface {
+	margin-top:100px;
+}
+
+.output {
+	margin-top:40px;
+}
+
+.center {
+	margin-left: auto;
+	margin-right: auto;
+	text-align:center;
+}
+
+.vanish {
+	opacity: 0;
+	transition:opacity 1s;
+}
+
+.input::after {
+	content: '|';
+	font-weight: bolder;
+	text-align: center;
+    opacity:1;
+    animation: flickerAnimation 1s infinite;
+}
+
+.input-box {
+	opacity:0;
+}
+
+.triangle {
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 30px 10px 0 10px;
+	border-color: #430566 transparent transparent transparent;
+	margin: 0 auto;
+	animation: pulseAnimation 3s infinite;
+}
+
+@keyframes flickerAnimation {
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+
+@keyframes pulseAnimation {
+  0%   { transform: scale(.8,.8); border-color: #430566 transparent transparent transparent; }
+  50%  { transform: scale(1.1,1.1); border-color: #620797 transparent transparent transparent;}
+  100% { transform: scale(.8,.8); border-color: #430566 transparent transparent transparent;}
+}

@@ -1,7 +1,17 @@
 body {
 	font-family: 'Anonymous Pro';
 	font-size: 3em;
+	transition: background-color 1s, color 1s;
 }
+
+body.invert {
+	background-color: #000;
+	color: #fff;
+}
+
+body.invert .triangle {
+}
+
 
 .interface {
 	margin-top:100px;
@@ -22,7 +32,7 @@ body {
 	transition:opacity 1s;
 }
 
-.input::after {
+x.input::after {
 	content: '|';
 	font-weight: bolder;
 	text-align: center;

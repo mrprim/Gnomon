@@ -2,100 +2,119 @@
 (function($) {
 	$.fn.gnomon = function(options) {
 		var self = this,
-			opts = $.extend({}, $.fn.gnomon.defaults, options),
-			responses = [
-				'AFFIRMATIVE',
-				'NEGATIVE',
-				'WARNING\nILLEGAL ACTIVITY DETECTED'
-			];
+			opts = $.extend({}, $.fn.gnomon.defaults, options);
 
-
-		function _build() {
-			self.addClass('gnomon');
-
-			_buildInput();
-			_buildIcon();
-			_buildOutput();
-			_attachEventListeners();
+		var commands = {
+			invert: ['invert','goodnight']
 		}
 
-		function _buildInput() {
+		var responses = {
+			invert: function() {
+				invert();
+			},
+			default: function() {
+				typeText('This is the default');
+			}
+		}
+
+		function build() {
+			self.addClass('gnomon');
+
+			buildInput();
+			buildIcon();
+			buildOutput();
+			attachEventListeners();
+		}
+
+		function buildInput() {
 			self.inputDisplay = $('<div/>').addClass('input').addClass('center').appendTo(self);
 			self.inputHidden = $('<input/>').addClass('input-box').appendTo(self);
 		}
 
-		function _buildIcon() {
+		function buildIcon() {
 			var iconWrapper = $('<div/>').addClass('icon-wrapper');
 
 			self.icon = $('<div/>').html('<span class="fa fa-eye"></span>').addClass('icon').addClass('center').appendTo(iconWrapper);
 			self.append(iconWrapper);
 		}
 
-		function _buildOutput() {
+		function buildOutput() {
 			self.outputDisplay = $('<div/>').addClass('output').addClass('center').appendTo(self);
 		}
 
-		function _attachEventListeners() {
-			_catchAllClicks();
-			_typeInInput();
+		function attachEventListeners() {
+			catchAllClicks();
+			typeInInput();
 		}
 
-		function _catchAllClicks() {
+		function catchAllClicks() {
 			$(document).on('click keydown', function() {
 				self.inputHidden.focus();
 			});			
 		}
 
-		function _typeInInput() {
+		function typeInInput() {
 			self.inputHidden.on('keyup',function(e, ev) {
 				if(e.which == 13) {
-					_submit();
+					submit();
 			    	return;
 			    }
-			    _updateInputDisplay();
+			    updateInputDisplay();
 			});
 		}
 
-		function _updateInputDisplay() {
+		function updateInputDisplay() {
 			self.inputDisplay.text($('.input-box').val());
 		}
 
-		function _submit() {
+		function submit() {
 			if(!self.outputDebounce) {
 				self.outputDebounce = true;
-				_handleInput();
-		       	_clearInput();
+				handleInput();
+		       	clearInput();
 			}
 		}
 
-		function _handleInput() {
-			var val = self.inputHidden.val().toUpperCase(),
+		function handleInput() {
+			var val = convertInputToCommand(self.inputHidden.val().toLowerCase()),
 				response;
 
-			if(val === 'INVERT') {
-				_invert();
+			if($.isFunction(responses[val])) {
+				responses[val]();
 			} else {
-				_defaultResponse();
+				responses['default']();
 			}
 		}
 
-		function _invert() {
+		function convertInputToCommand(input) {
+			var command;
+
+			$.each(commands, function(name, array) {
+				if(array.includes(input)) {
+					command = name;
+					return;
+				}
+			});
+			return command;
+		}
+
+		function invert() {
 			$('body').toggleClass('invert');
 			self.outputDebounce = false;
 		}
 
-		function _defaultResponse() {
-			_typeText(getResponse());
+		function defaultResponse() {
+			typeText(getResponse());
 		}
 
-		function _typeText(text, typeSpeed) {
+		function typeText(text, typeSpeed) {
 			typeSpeed = typeSpeed || 150;
 			var textArray = text && text.split('');
 
-			_typeLetter(textArray, typeSpeed);
+			typeLetter(textArray, typeSpeed);
 		}
 
-		function _typeLetter(stringArray, typeSpeed, index) {
+		function typeLetter(stringArray, typeSpeed, index) {
 			index = index || 0;
 			var char;
 
@@ -107,16 +126,16 @@
 				self.outputDisplay.append(char);
 				index = ++index;
 				setTimeout(function() {
-					_typeLetter(stringArray, typeSpeed, index)
+					typeLetter(stringArray, typeSpeed, index)
 				}, typeSpeed);
 			} else {
 				setTimeout(function() {
-					_clearOutput();
+					clearOutput();
 				}, 2000);
 			}
 		}
 
-		function _clearOutput() {
+		function clearOutput() {
 			self.outputDisplay.addClass('vanish');
 		    setTimeout(function() {
 		    	self.outputDisplay.removeClass('vanish');
@@ -126,7 +145,7 @@
 		    }, 1000)
 		}
 
-		function _clearInput() {
+		function clearInput() {
 			self.inputDisplay.addClass('vanish');
 		    setTimeout(function() {
 		    	self.inputDisplay.removeClass('vanish');
@@ -135,11 +154,7 @@
 		    }, 4000);
 		}
 
-		function getResponse() {
-			return responses[Math.floor(Math.random() * responses.length)];
-		}
-
-		_build();
+		build();
 	}
 	$.fn.gnomon.defaults = {
 		afterBuild:function() {}

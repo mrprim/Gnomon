@@ -5,16 +5,22 @@
 			opts = $.extend({}, $.fn.gnomon.defaults, options);
 
 		var commands = {
-			invert: ['invert','goodnight']
+			invert: {
+				input: ['invert','goodnight', 'ain'],
+				action: invert
+			},
+			greet: {
+				input: ['hi','hello','gnomon'],
+				match: [/ain/g],
+				response: ['Hello, User','Yes?','How can I assist you?']
+			},
+			default: {
+				response: ['This is the default']
+			}
 		}
 
-		var responses = {
-			invert: function() {
-				invert();
-			},
-			default: function() {
-				typeText('This is the default');
-			}
+		function randomItem(array) {
+			return array[Math.floor(Math.random()*array.length)];
 		}
 
 		function build() {
@@ -76,26 +82,48 @@
 		}
 
 		function handleInput() {
-			var val = convertInputToCommand(self.inputHidden.val().toLowerCase()),
-				response;
+			var val = convertInputToCommand(self.inputHidden.val()),
+				command = commands[val];
 
-			if($.isFunction(responses[val])) {
-				responses[val]();
-			} else {
-				responses['default']();
+			if(command.action && $.isFunction(command.action)) {
+				command.action();
+			}
+
+			if(command.response) {
+				typeText(randomItem(command.response));
 			}
 		}
 
 		function convertInputToCommand(input) {
 			var command;
 
-			$.each(commands, function(name, array) {
-				if(array.includes(input)) {
+			input = input && input.trim().toLowerCase();
+
+			$.each(commands, function(name, obj) {
+				if(obj.input && obj.input.includes(input)) {
 					command = name;
 					return;
 				}
 			});
-			return command;
+
+			if(!command) {
+				$.each(commands, function(name, obj) {
+					if(obj.match) {
+						$.each(obj.match, function(i,regex) {
+							if(input.match(regex)) {
+								command = name;
+								return;
+							}
+						});
+					}
+					if(command) {
+						return;
+					}
+				});				
+			}
+
+
+			return command || 'default';
 		}
 
 		function invert() {

@@ -23,6 +23,7 @@ body.invert .triangle {
 
 .output {
 	margin-top:40px;
+	text-transform:uppercase;
 }
 
 .center {

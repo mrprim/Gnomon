@@ -4,18 +4,41 @@
 		var self = this,
 			opts = $.extend({}, $.fn.gnomon.defaults, options);
 
+		var rituals = {
+			minor: [],
+			significant: [],
+			major: []
+		}
+
 		var commands = {
 			invert: {
-				input: ['invert','goodnight', 'ain'],
+				input: ['invert','goodnight'],
 				action: invert
 			},
 			greet: {
 				input: ['hi','hello','gnomon'],
-				match: [/ain/g],
 				response: ['Hello, User','Yes?','How can I assist you?']
 			},
+			goodbye: {
+				input: ['goodbye'],
+				action: winkOutIcon,
+				response: ['goodbye']
+			},
+			credits: {
+				input: ['who?'],
+				action: showCredits
+			},
+			ritual: {
+				input: ['ritual'],
+				response: ['MAAAAAGIC!']
+			},
+			error: {
+				input: ['error'],
+				action: glitch,
+				response: ['error']
+			},
 			default: {
-				response: ['This is the default']
+				response: ['...']
 			}
 		}
 
@@ -23,29 +46,47 @@
 			return array[Math.floor(Math.random()*array.length)];
 		}
 
+		function showCredits() {
+			self.credits.addClass('reveal');
+			setTimeout(function() {
+				self.credits.removeClass('reveal');
+			}, 5000)
+		}
+
+		function glitch() {
+			self.icon.addClass('glitch');
+			setTimeout(function() {
+				self.icon.removeClass('glitch');
+			}, 2000)
+		}
+
 		function build() {
 			self.addClass('gnomon');
+			self.body = $('body');
 
 			buildInput();
 			buildIcon();
 			buildOutput();
+			buildOverlays();
 			attachEventListeners();
 		}
 
 		function buildInput() {
-			self.inputDisplay = $('<div/>').addClass('input').addClass('center').appendTo(self);
+			self.inputDisplay = $('<div/>').addClass('input center').appendTo(self);
 			self.inputHidden = $('<input/>').addClass('input-box').appendTo(self);
 		}
 
 		function buildIcon() {
-			var iconWrapper = $('<div/>').addClass('icon-wrapper');
-
-			self.icon = $('<div/>').html('<span class="fa fa-eye"></span>').addClass('icon').addClass('center').appendTo(iconWrapper);
-			self.append(iconWrapper);
+			self.iconWrapper = $('<div/>').addClass('icon-wrapper').appendTo(self);
+			self.icon = $('<div/>').html('<span class="fa fa-eye"></span>').addClass('icon float center').appendTo(self.iconWrapper);
 		}
 
 		function buildOutput() {
-			self.outputDisplay = $('<div/>').addClass('output').addClass('center').appendTo(self);
+			self.outputDisplay = $('<div/>').addClass('output center').appendTo(self);
+		}
+
+		function buildOverlays() {
+			self.credits = $('<div/>').addClass('credits overlay').text('Chief Programmer: Sergio Rodriguez').appendTo(self.body);
 		}
 
 		function attachEventListeners() {
@@ -76,22 +117,35 @@
 		function submit() {
 			if(!self.outputDebounce) {
 				self.outputDebounce = true;
-				handleInput();
-		       	clearInput();
+
+				handleInput().done(function() {
+			       	clearInput();
+			       	setTimeout(clearOutput,3000);
+					self.outputDebounce = false;
+				});
 			}
 		}
 
 		function handleInput() {
 			var val = convertInputToCommand(self.inputHidden.val()),
-				command = commands[val];
+				command = commands[val],
+				dfd = $.Deferred();
 
+			showIcon();
 			if(command.action && $.isFunction(command.action)) {
-				command.action();
+				executeAction(dfd, command.action);
 			}
 
 			if(command.response) {
-				typeText(randomItem(command.response));
+				typeText(dfd, randomItem(command.response));
 			}
+
+			return dfd.promise();
+		}
+
+		function executeAction(dfd, action) {
+			action();
+			dfd.resolve();
 		}
 
 		function convertInputToCommand(input) {
@@ -128,21 +182,20 @@
 
 		function invert() {
 			$('body').toggleClass('invert');
-			self.outputDebounce = false;
 		}
 
 		function defaultResponse() {
 			typeText(getResponse());
 		}
 
-		function typeText(text, typeSpeed) {
+		function typeText(dfd, text, typeSpeed) {
 			typeSpeed = typeSpeed || 150;
 			var textArray = text && text.split('');
 
-			typeLetter(textArray, typeSpeed);
+			typeLetter(dfd, textArray, typeSpeed);
 		}
 
-		function typeLetter(stringArray, typeSpeed, index) {
+		function typeLetter(dfd, stringArray, typeSpeed, index) {
 			index = index || 0;
 			var char;
 
@@ -154,12 +207,10 @@
 				self.outputDisplay.append(char);
 				index = ++index;
 				setTimeout(function() {
-					typeLetter(stringArray, typeSpeed, index)
+					typeLetter(dfd, stringArray, typeSpeed, index)
 				}, typeSpeed);
 			} else {
-				setTimeout(function() {
-					clearOutput();
-				}, 2000);
+				dfd.resolve();
 			}
 		}
 
@@ -168,8 +219,6 @@
 		    setTimeout(function() {
 		    	self.outputDisplay.removeClass('vanish');
 		    	self.outputDisplay.html('');
-		    	self.outputDebounce = false;
-
 		    }, 1000)
 		}
 
@@ -179,13 +228,22 @@
 		    	self.inputDisplay.removeClass('vanish');
 		    	self.inputDisplay.text('');
 		    	self.inputHidden.val('');
-		    }, 4000);
+		    }, 1000);
+		}
+
+		function showIcon() {
+			self.icon.removeClass('wink').addClass('float');
+			self.iconWrapper.removeClass('vanish');
+		}
+
+		function winkOutIcon() {
+			self.icon.addClass('wink').removeClass('float');
+			self.iconWrapper.addClass('vanish');
 		}
 
 		build();
 	}
 	$.fn.gnomon.defaults = {
-		afterBuild:function() {}
 	};
 }(jQuery))
 

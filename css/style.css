@@ -2,6 +2,7 @@ body {
 	font-family: 'Anonymous Pro';
 	font-size: 3em;
 	transition: background-color 1s, color 1s;
+	text-transform:uppercase;
 }
 
 body.invert {
@@ -9,58 +10,41 @@ body.invert {
 	color: #fff;
 }
 
-body.invert .triangle {
+.overlay {
+	position: absolute;
+	top: 0;
+	text-align: center;
+	width:100%;
+	opacity: 0;
+	transition:opacity 1s;
+	font-size: .5em;
 }
 
+.gnomon {
+	position:relative;
+}
 
-.interface {
+.gnomon .input {
 	margin-top:100px;
-}
-
-.input {
 	height: 60px;
 }
 
-.output {
+.gnomon .output {
 	margin-top:40px;
-	text-transform:uppercase;
 }
 
-.center {
+.gnomon .center {
 	margin-left: auto;
 	margin-right: auto;
 	text-align:center;
 }
 
-.vanish {
-	opacity: 0;
-	transition:opacity 1s;
-}
-
-x.input::after {
-	content: '|';
-	font-weight: bolder;
-	text-align: center;
-    opacity:1;
-    animation: flickerAnimation 1s infinite;
-}
-
-.input-box {
+.gnomon .input-box {
 	opacity:0;
 	height:0;
 }
 
-.triangle {
-	width: 0;
-	height: 0;
-	border-style: solid;
-	border-width: 30px 10px 0 10px;
-	border-color: #430566 transparent transparent transparent;
-	margin: 0 auto;
-	animation: pulseAnimation 3s infinite;
-}
-
-.icon {
+.gnomon .icon {
 	display:block;
 	border-radius:40px;
 	line-height: 40px;
@@ -72,10 +56,10 @@ x.input::after {
 	height: 40px;
 	width: 40px;
 	box-shadow: 0 0 0 1px rgba(0,0,0,.4);
-	animation: floatingIcon 3s infinite;
+	transition: background-color .2s;
 }
 
-.icon-wrapper::after {
+.gnomon .icon-wrapper::after {
 	content:'';
 	display:block;
 	border-radius:20px;
@@ -86,22 +70,51 @@ x.input::after {
 	vertical-align: middle;
 	background-color: rgba(67, 5, 102,.4);
 	margin: 0 auto;
-	transform: ;
 	animation: iconShadow 3s infinite;
 }
 
-.icon .fa {
+.gnomon .icon .fa {
 	display:block;
 	padding-top:3px;
-
 }
-@keyframes flickerAnimation {
+
+/* Animation States*/
+
+.float {
+	animation: float 3s infinite;
+}
+
+.vanish {
+	opacity: 0;
+	transition:opacity 1s;
+}
+
+.reveal {
+	opacity: 1;
+	transition:opacity 1s;
+}
+
+.wink {
+	animation: wink 1s forwards;
+}
+
+.glitch {
+	background-color: #ddd !important;
+	animation: glitch .4s infinite;
+}
+
+@keyframes static {
   0%   { opacity:1; }
   50%  { opacity:0; }
   100% { opacity:1; }
 }
 
-@keyframes floatingIcon {
+@keyframes wink {
+  from { transform:rotateX(0deg); }
+  to { transform:rotateX(90deg); }
+}
+
+@keyframes float {
   0%  { transform: scale(1.1,1.1) translate(0,-25px);}
   50%   { transform: scale(.9,.9) translate(0,0); }
   100%  { transform: scale(1.1,1.1) translate(0,-25px);}
@@ -111,4 +124,13 @@ x.input::after {
   0%  { transform: rotateX(80deg) scale(.9,.9);}
   50%   { transform: rotateX(80deg) scale(1.1,1.1); }
   100%  { transform: rotateX(80deg) scale(.9,.9);}
+}
+
+@keyframes glitch {
+  0%  { transform: translate(-2px,5px) scale(.9,.9) skew(81deg)}
+  18%   { transform: translate(0,0) scale(1.1,.5); }
+  20%  { transform: translate(3px, 1px) scale(.9,.9) skew(-78deg);}
+  50%  { transform: translate(0, -5px) scale(.9,.9);}
+  83%   { transform: translate(-1px, -1px) scale(.2,1.1) skew(88deg); }
+  100%  { transform: translate(2px, 3px) scale(.9,.9);}
 }

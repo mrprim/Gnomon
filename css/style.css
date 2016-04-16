@@ -71,7 +71,7 @@ x.input::after {
 	height: 40px;
 	width: 40px;
 	box-shadow: 0 0 0 1px rgba(0,0,0,.4);
-	animation: pulseAnimation 3s infinite;
+	animation: floatingIcon 3s infinite;
 }
 
 .icon-wrapper::after {
@@ -85,7 +85,8 @@ x.input::after {
 	vertical-align: middle;
 	background-color: rgba(67, 5, 102,.4);
 	margin: 0 auto;
-	transform: rotateX(80deg);
+	transform: ;
+	animation: iconShadow 3s infinite;
 }
 
 .icon .fa {
@@ -99,8 +100,14 @@ x.input::after {
   100% { opacity:1; }
 }
 
-@keyframes pulseAnimation {
+@keyframes floatingIcon {
   0%  { transform: scale(1.1,1.1) translate(0,-25px);}
   50%   { transform: scale(.9,.9) translate(0,0); }
   100%  { transform: scale(1.1,1.1) translate(0,-25px);}
+}
+
+@keyframes iconShadow {
+  0%  { transform: rotateX(80deg) scale(.9,.9);}
+  50%   { transform: rotateX(80deg) scale(1.1,1.1); }
+  100%  { transform: rotateX(80deg) scale(.9,.9);}
 }

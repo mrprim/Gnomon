@@ -17,6 +17,10 @@ body.invert .triangle {
 	margin-top:100px;
 }
 
+.input {
+	height: 60px;
+}
+
 .output {
 	margin-top:40px;
 }
@@ -42,6 +46,7 @@ x.input::after {
 
 .input-box {
 	opacity:0;
+	height:0;
 }
 
 .triangle {
@@ -54,6 +59,40 @@ x.input::after {
 	animation: pulseAnimation 3s infinite;
 }
 
+.icon {
+	display:block;
+	border-radius:40px;
+	line-height: 40px;
+	vertical-align: middle;
+	color:white;
+	background-color: #430566;
+	margin: 0 auto;
+	text-align:center;
+	height: 40px;
+	width: 40px;
+	box-shadow: 0 0 0 1px rgba(0,0,0,.4);
+	animation: pulseAnimation 3s infinite;
+}
+
+.icon-wrapper::after {
+	content:'';
+	display:block;
+	border-radius:20px;
+	line-height: 20px;
+	box-shadow: 0 0 10px 10px rgba(67, 5, 102,.4);
+	height: 20px;
+	width: 20px;
+	vertical-align: middle;
+	background-color: rgba(67, 5, 102,.4);
+	margin: 0 auto;
+	transform: rotateX(80deg);
+}
+
+.icon .fa {
+	display:block;
+	padding-top:3px;
+
+}
 @keyframes flickerAnimation {
   0%   { opacity:1; }
   50%  { opacity:0; }
@@ -61,7 +100,7 @@ x.input::after {
 }
 
 @keyframes pulseAnimation {
-  0%   { transform: scale(.8,.8); border-color: #430566 transparent transparent transparent; }
-  50%  { transform: scale(1.1,1.1); border-color: #620797 transparent transparent transparent;}
-  100% { transform: scale(.8,.8); border-color: #430566 transparent transparent transparent;}
+  0%  { transform: scale(1.1,1.1) translate(0,-25px);}
+  50%   { transform: scale(.9,.9) translate(0,0); }
+  100%  { transform: scale(1.1,1.1) translate(0,-25px);}
 }

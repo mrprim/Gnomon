@@ -4,17 +4,17 @@
 		var self = this,
 			opts = $.extend({}, $.fn.gnomon.defaults, options),
 			responses = [
-			'AFFIRMATIVE',
-			'NEGATIVE',
-			'WARNING\nILLEGAL ACTIVITY DETECTED'
-		]
+				'AFFIRMATIVE',
+				'NEGATIVE',
+				'WARNING\nILLEGAL ACTIVITY DETECTED'
+			];
 
 
 		function _build() {
 			self.addClass('gnomon');
 
-			_buildIcon();
 			_buildInput();
+			_buildIcon();
 			_buildOutput();
 			_attachEventListeners();
 		}
@@ -25,7 +25,10 @@
 		}
 
 		function _buildIcon() {
-			self.icon = $('<div/>').addClass('triangle').addClass('center').appendTo(self);
+			var iconWrapper = $('<div/>').addClass('icon-wrapper');
+
+			self.icon = $('<div/>').html('<span class="fa fa-eye"></span>').addClass('icon').addClass('center').appendTo(iconWrapper);
+			self.append(iconWrapper);
 		}
 
 		function _buildOutput() {
@@ -51,7 +54,6 @@
 			    }
 			    _updateInputDisplay();
 			});
-
 		}
 
 		function _updateInputDisplay() {
@@ -75,16 +77,11 @@
 			} else {
 				_defaultResponse();
 			}
-
 		}
 
 		function _invert() {
-			$('body').addClass('invert');
+			$('body').toggleClass('invert');
 			self.outputDebounce = false;
-
-			setTimeout(function() {
-				$('body').removeClass('invert');
-			},15000);
 		}
 
 		function _defaultResponse() {
@@ -135,7 +132,7 @@
 		    	self.inputDisplay.removeClass('vanish');
 		    	self.inputDisplay.text('');
 		    	self.inputHidden.val('');
-		    }, 1000);
+		    }, 4000);
 		}
 
 		function getResponse() {

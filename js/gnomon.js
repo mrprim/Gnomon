@@ -42,6 +42,23 @@
 			},
 			default: {
 				response: ['...']
+			},
+			charges: {
+				match: [/score/],
+				action: showCharges
+			},
+			gainMinorCharge: {
+				match: [/charge/],
+				action: gainMinorCharge
+			}
+
+		}
+
+		var user = {
+			charges: {
+				minor: 0,
+				significant: 0,
+				major: 0
 			}
 		}
 
@@ -51,6 +68,19 @@
 
 		function showCredits() {
 			reveal(self.credits);
+		}
+
+		function showCharges() {
+			self.charges.text('');
+			self.charges.append('<div>Minor Charges: ' + user.charges.minor + '</div>');
+			self.charges.append('<div>Significant Charges: ' + user.charges.significant + '</div>');
+			self.charges.append('<div>Major Charges: ' + user.charges.major + '</div>');
+			reveal(self.charges);
+		}
+
+		function gainMinorCharge() {
+			user.charges.minor += 1;
+			showCharges();
 		}
 
 		function glitch() {
@@ -87,7 +117,9 @@
 
 		function buildOverlays() {
 			self.credits = $('<div/>').addClass('credits overlay').text('Chief Architect: Sergio Rodriguez').appendTo(self.body);
+			self.charges = $('<div/>').addClass('charges overlay').text('No Charges').appendTo(self.body);
 		}
+
 
 		function attachEventListeners() {
 			catchAllClicks();
@@ -272,7 +304,7 @@
 			obj.addClass('reveal');
 			setTimeout(function() {
 				obj.removeClass('reveal');
-			}, 5000)
+			}, 10000)
 		}
 
 		function clear(obj) {

@@ -20,6 +20,10 @@ body.invert {
 	font-size: .5em;
 }
 
+.overlay.charges {
+	text-align: right
+}
+
 .gnomon {
 	position:relative;
 }

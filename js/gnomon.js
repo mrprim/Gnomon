@@ -1,5 +1,5 @@
-'use strict';
 (function($) {
+	'use strict';
 	$.fn.gnomon = function(options) {
 		var self = this,
 			opts = $.extend({}, $.fn.gnomon.defaults, options),
@@ -9,7 +9,7 @@
 			minor: [],
 			significant: [],
 			major: []
-		}
+		};
 
 		var commands = {
 			invert: {
@@ -52,7 +52,7 @@
 				action: gainMinorCharge
 			}
 
-		}
+		};
 
 		var user = {
 			charges: {
@@ -60,7 +60,7 @@
 				significant: 0,
 				major: 0
 			}
-		}
+		};
 
 		function randomItem(array) {
 			return array[Math.floor(Math.random()*array.length)];
@@ -87,7 +87,7 @@
 			self.icon.addClass('glitch');
 			setTimeout(function() {
 				self.icon.removeClass('glitch');
-			}, 2000)
+			}, 2000);
 		}
 
 		function build() {
@@ -140,7 +140,6 @@
 			    	return;
 			    }
 			    code.push(e.which);
-			    console.log(code);
 			    updateInputDisplay();
 			});
 		}
@@ -205,7 +204,7 @@
 							command = name;
 							return;
 						}
-					}) 
+					});
 					if(command) {
 						return;
 					}
@@ -253,7 +252,7 @@
 
 		function arraysEqual(a, b) {
 		  if (a === b) return true;
-		  if (a == null || b == null) return false;
+		  if (a === null || b === null) return false;
 		  if (a.length != b.length) return false;
 
 		  for (var i = 0; i < a.length; ++i) {
@@ -264,10 +263,6 @@
 
 		function invert() {
 			$('body').toggleClass('invert');
-		}
-
-		function defaultResponse() {
-			typeText(getResponse());
 		}
 
 		function typeText(dfd, text, typeSpeed) {
@@ -290,7 +285,7 @@
 				display.append(char);
 				index = ++index;
 				setTimeout(function() {
-					typeLetter(dfd, display, stringArray, typeSpeed, index)
+					typeLetter(dfd, display, stringArray, typeSpeed, index);
 				}, typeSpeed);
 			} else {
 				dfd.resolve();
@@ -304,7 +299,7 @@
 			obj.addClass('reveal');
 			setTimeout(function() {
 				obj.removeClass('reveal');
-			}, 10000)
+			}, 10000);
 		}
 
 		function clear(obj) {
@@ -312,7 +307,7 @@
 		    setTimeout(function() {
 		    	obj.removeClass('vanish');
 		    	obj.html('');
-		    }, 1000)
+		    }, 1000);
 		}
 
 		function clearInput() {

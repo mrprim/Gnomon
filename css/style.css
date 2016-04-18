@@ -32,6 +32,13 @@ body.invert {
 	margin-top:100px;
 	height: 60px;
 }
+.gnomon .input::after {
+  	content: '|';
+  	font-weight: bolder;
+  	text-align: center;
+     opacity:1;
+     animation: blink 3s infinite;
+ }
 
 .gnomon .output {
 	margin-top:40px;
@@ -85,7 +92,7 @@ body.invert {
 /* Animation States*/
 
 .float {
-	animation: float 3s infinite;
+	animation: float 2s infinite;
 }
 
 .vanish {
@@ -137,4 +144,10 @@ body.invert {
   50%  { transform: translate(0, -5px) scale(.9,.9);}
   83%   { transform: translate(-1px, -1px) scale(.2,1.1) skew(88deg); }
   100%  { transform: translate(2px, 3px) scale(.9,.9);}
+}
+
+@keyframes blink {
+  0%  { opacity: 1;}
+  50%   { opacity: 0; }
+  100%  { opacity: 1;}
 }

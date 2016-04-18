@@ -2,7 +2,8 @@
 (function($) {
 	$.fn.gnomon = function(options) {
 		var self = this,
-			opts = $.extend({}, $.fn.gnomon.defaults, options);
+			opts = $.extend({}, $.fn.gnomon.defaults, options),
+			code = [];
 
 		var rituals = {
 			minor: [],
@@ -12,6 +13,7 @@
 
 		var commands = {
 			invert: {
+				code: [[38,38,40,40,37,39,37,39,65,66,65,66]],
 				input: ['invert','goodnight'],
 				action: invert
 			},
@@ -30,6 +32,7 @@
 			},
 			ritual: {
 				input: ['ritual'],
+				match: [/ain/],
 				response: ['MAAAAAGIC!']
 			},
 			error: {
@@ -47,10 +50,7 @@
 		}
 
 		function showCredits() {
-			self.credits.addClass('reveal');
-			setTimeout(function() {
-				self.credits.removeClass('reveal');
-			}, 5000)
+			reveal(self.credits);
 		}
 
 		function glitch() {
@@ -86,7 +86,7 @@
 		}
 
 		function buildOverlays() {
-			self.credits = $('<div/>').addClass('credits overlay').text('Chief Programmer: Sergio Rodriguez').appendTo(self.body);
+			self.credits = $('<div/>').addClass('credits overlay').text('Chief Architect: Sergio Rodriguez').appendTo(self.body);
 		}
 
 		function attachEventListeners() {
@@ -104,8 +104,11 @@
 			self.inputHidden.on('keyup',function(e, ev) {
 				if(e.which == 13) {
 					submit();
+					code = [];
 			    	return;
 			    }
+			    code.push(e.which);
+			    console.log(code);
 			    updateInputDisplay();
 			});
 		}
@@ -120,7 +123,6 @@
 
 				handleInput().done(function() {
 			       	clearInput();
-			       	setTimeout(clearOutput,3000);
 					self.outputDebounce = false;
 				});
 			}
@@ -153,6 +155,38 @@
 
 			input = input && input.trim().toLowerCase();
 
+			command = inputIsACommandCode(command);
+			command = inputIsACommandInput(input, command);
+			command = inputIsACommandMatch(input, command);
+
+			return command || 'default';
+		}
+
+		function inputIsACommandCode(command) {
+			if(command) {
+				return command;
+			}
+			$.each(commands, function(name, obj) {
+				if(obj.code) {
+					$.each(obj.code, function(j, nCode) {
+						if(arraysEqual(code, nCode)) {
+							command = name;
+							return;
+						}
+					}) 
+					if(command) {
+						return;
+					}
+				}
+			});
+			return command;
+		}
+
+		function inputIsACommandInput(input, command) {
+			if(command) {
+				return command;
+			}
+
 			$.each(commands, function(name, obj) {
 				if(obj.input && obj.input.includes(input)) {
 					command = name;
@@ -160,24 +194,40 @@
 				}
 			});
 
-			if(!command) {
-				$.each(commands, function(name, obj) {
-					if(obj.match) {
-						$.each(obj.match, function(i,regex) {
-							if(input.match(regex)) {
-								command = name;
-								return;
-							}
-						});
-					}
-					if(command) {
-						return;
-					}
-				});				
+			return command;			
+		}
+
+		function inputIsACommandMatch(input, command) {
+			if(command) {
+				return command;
 			}
 
+			$.each(commands, function(name, obj) {
+				if(obj.match) {
+					$.each(obj.match, function(i,regex) {
+						if(input.match(regex)) {
+							command = name;
+							return;
+						}
+					});
+				}
+				if(command) {
+					return;
+				}
+			});				
 
-			return command || 'default';
+			return command;
+		}
+
+		function arraysEqual(a, b) {
+		  if (a === b) return true;
+		  if (a == null || b == null) return false;
+		  if (a.length != b.length) return false;
+
+		  for (var i = 0; i < a.length; ++i) {
+		    if (a[i] !== b[i]) return false;
+		  }
+		  return true;
 		}
 
 		function invert() {
@@ -190,12 +240,13 @@
 
 		function typeText(dfd, text, typeSpeed) {
 			typeSpeed = typeSpeed || 150;
-			var textArray = text && text.split('');
+			var textArray = text && text.split(''),
+				output = $('<div/>').prependTo(self.outputDisplay);
 
-			typeLetter(dfd, textArray, typeSpeed);
+			typeLetter(dfd, output, textArray, typeSpeed);
 		}
 
-		function typeLetter(dfd, stringArray, typeSpeed, index) {
+		function typeLetter(dfd, display, stringArray, typeSpeed, index) {
 			index = index || 0;
 			var char;
 
@@ -204,21 +255,31 @@
 				if(char === '\n') {
 					char = '<br/>';
 				}
-				self.outputDisplay.append(char);
+				display.append(char);
 				index = ++index;
 				setTimeout(function() {
-					typeLetter(dfd, stringArray, typeSpeed, index)
+					typeLetter(dfd, display, stringArray, typeSpeed, index)
 				}, typeSpeed);
 			} else {
 				dfd.resolve();
+				setTimeout(function() {
+					clear(display);
+				}, 3000);
 			}
 		}
 
-		function clearOutput() {
-			self.outputDisplay.addClass('vanish');
+		function reveal(obj) {
+			obj.addClass('reveal');
+			setTimeout(function() {
+				obj.removeClass('reveal');
+			}, 5000)
+		}
+
+		function clear(obj) {
+			obj.addClass('vanish');
 		    setTimeout(function() {
-		    	self.outputDisplay.removeClass('vanish');
-		    	self.outputDisplay.html('');
+		    	obj.removeClass('vanish');
+		    	obj.html('');
 		    }, 1000)
 		}
 

@@ -37,7 +37,7 @@ body.invert {
   	font-weight: bolder;
   	text-align: center;
      opacity:1;
-     animation: blink 3s infinite;
+     animation: blink 2s infinite;
  }
 
 .gnomon .output {

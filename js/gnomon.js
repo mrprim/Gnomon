@@ -50,6 +50,10 @@
 			gainMinorCharge: {
 				match: [/charge/],
 				action: gainMinorCharge
+			},
+			navigate: {
+				match: [/http*/],
+				action: openUrl
 			}
 
 		};
@@ -76,6 +80,12 @@
 			self.charges.append('<div>Significant Charges: ' + user.charges.significant + '</div>');
 			self.charges.append('<div>Major Charges: ' + user.charges.major + '</div>');
 			reveal(self.charges);
+		}
+
+		function openUrl() {
+			var url = self.inputHidden.val();
+			console.log(url);
+			window.open(url);
 		}
 
 		function gainMinorCharge() {
@@ -134,13 +144,20 @@
 
 		function typeInInput() {
 			self.inputHidden.on('keyup',function(e, ev) {
-				if(e.which == 13) {
+				var char = e.which;
+
+				if(char == 13) {
 					submit();
 					code = [];
 			    	return;
 			    }
-			    code.push(e.which);
+
+			    code.push(char);
 			    updateInputDisplay();
+
+				if(char === 8) {
+					ev.preventDefault();
+			    }
 			});
 		}
 
